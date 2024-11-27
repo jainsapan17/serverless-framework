@@ -13,8 +13,8 @@ class MyServerlessAppStack(Stack):
 
         # Cognito User Pool
         user_pool = cognito.UserPool(
-            self, "MyUserPool",
-            user_pool_name="MyUserPool",
+            self, "MyappUserPool",
+            user_pool_name="MyappUserPool",
             self_sign_up_enabled=True,  # Allow users to sign up
             sign_in_aliases=cognito.SignInAliases(
                 email=True,  # Allow sign in with email
@@ -32,7 +32,7 @@ class MyServerlessAppStack(Stack):
 
         # Cognito User Pool Client
         user_pool_client = user_pool.add_client(
-            "MyUserPoolClient",
+            "MyappUserPoolClient",
             auth_flows=cognito.AuthFlow(
                 user_password=True,
                 user_srp=True
@@ -41,7 +41,7 @@ class MyServerlessAppStack(Stack):
 
         # Lambda Function
         lambda_function = _lambda.Function(
-            self, "MyLambdaFunction",
+            self, "MyappLambdaFunction",
             runtime=_lambda.Runtime.PYTHON_3_9,
             handler="lambda_function.lambda_handler",
             code=_lambda.Code.from_asset("lambda/myapp"),  # Assuming your code is in a folder named "lambda"
@@ -49,7 +49,7 @@ class MyServerlessAppStack(Stack):
 
         # API Gateway
         api = apigateway.LambdaRestApi(
-            self, "MyApiGateway",
+            self, "MyappApiGateway",
             handler=lambda_function,
             rest_api_name="MyServerlessApi",
             default_cors_preflight_options={
@@ -60,7 +60,7 @@ class MyServerlessAppStack(Stack):
 
         # Authorizer using Cognito
         authorizer = apigateway.CognitoUserPoolsAuthorizer(
-            self, "MyCognitoAuthorizer",
+            self, "MyappCognitoAuthorizer",
             cognito_user_pools=[user_pool]
         )
 
