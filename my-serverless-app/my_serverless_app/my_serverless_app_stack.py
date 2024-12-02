@@ -8,6 +8,7 @@ from aws_cdk import (
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
     aws_s3_deployment as s3deploy,
+    aws_dynamodb as dynamodb,
     RemovalPolicy,
     CfnOutput
 )
@@ -190,6 +191,24 @@ class MyServerlessAppStack(Stack):
             )
         )
 
+        #------------------------#
+        # [6] Dynamodb ----->>>
+        #------------------------#
+        # Create a DynamoDB table
+        table = dynamodb.Table(
+            self, "MyAppTable",
+            partition_key=dynamodb.Attribute(
+                name="id",
+                type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            removal_policy=RemovalPolicy.DESTROY
+        )
+
+        # Grant the Lambda function read/write permissions to the table
+        table.grant_read_write_data(lambda_function)
+
+
         # Deploy site contents to S3 bucket
         s3deploy.BucketDeployment(
             self, "DeployWebsite",
@@ -198,7 +217,6 @@ class MyServerlessAppStack(Stack):
             distribution=distribution,
             distribution_paths=["/*"]
         )
-
 
         # Outputs
         CfnOutput(self, "ApiUrl", value=api.url)
