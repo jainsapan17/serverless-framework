@@ -223,4 +223,4 @@ class MyServerlessAppStack(Stack):
         CfnOutput(self, "UserPoolId", value=user_pool.user_pool_id)
         CfnOutput(self, "UserPoolClientId", value=user_pool_client.user_pool_client_id)
         CfnOutput(self, "WebsiteBucketName", value=website_bucket.bucket_name)
-        # CfnOutput(self, "CloudFrontDomainName", value=distribution.domain_name)
+        CfnOutput(self, "CloudFrontDomainName", value=distribution.attr_domain_name)
